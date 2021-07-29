@@ -24,25 +24,25 @@ Here's a more realistic scenario with Vite, importing stories from a directory, 
 import FluentStory from "fluent-story";
 
 const stories = Object.fromEntries(
-	Object.entries(import.meta.globEager("./stories/*.tsx"))
-		.map(([, imported]) => imported.default)
-		.map(imported => [imported.title, imported.component]),
+  Object.entries(import.meta.globEager("./stories/*.tsx"))
+    .map(([, imported]) => imported.default)
+    .map(imported => [imported.title, imported.component]),
 );
 
 export default () => {
-	return (<Router>
-		<Switch>
-			// conditionally render stories only in dev
-			{import.meta.env.DEV && (
-				<Route
-					path="/stories"
-					render={() => <Stories stories={stories} />}
-					exact
-				/>
-			)}
-			// your other routes
-		</Switch>
-	</Router>);
+  return (<Router>
+    <Switch>
+      // conditionally render stories only in dev
+      {import.meta.env.DEV && (
+        <Route
+          path="/stories"
+          render={() => <Stories stories={stories} />}
+          exact
+        />
+      )}
+      // your other routes
+    </Switch>
+  </Router>);
 }
 ```
 
