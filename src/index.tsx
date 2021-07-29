@@ -69,7 +69,7 @@ const Stories: FC<{
 
 	const Component = compName && stories[compName];
 
-	if (compName) return Component ? h(Component) : h("Component not found");
+	if (compName) return Component ? <Component /> : <>"Component not found"</>;
 
 	return (
 		<div className={wrapper}>
