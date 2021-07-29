@@ -45,3 +45,5 @@ export default () => {
 	</Router>);
 }
 ```
+
+Vite will remove dead code in production, and your existing build config is just used as-is.
