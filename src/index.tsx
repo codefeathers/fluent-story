@@ -1,4 +1,4 @@
-import { createElement as h, useState } from "react";
+import React, { createElement as h, useState } from "react";
 import type { FC, ComponentClass } from "react";
 import { css } from "@emotion/css";
 
@@ -49,6 +49,12 @@ const btn = css`
 	cursor: pointer;
 `;
 
+const preview = css`
+	width: 100%;
+	height: 100%;
+	border: none;
+`;
+
 const Stories: FC<{
 	stories: Record<string, FC | ComponentClass>;
 	title?: string;
@@ -65,36 +71,32 @@ const Stories: FC<{
 
 	if (compName) return Component ? h(Component) : h("Component not found");
 
-	return h(
-		"div",
-		{ className: wrapper },
-		h(
-			"div",
-			{ className: sideBar },
-			Object.keys(stories).map((key, idx) =>
-				h(
-					"button",
-					{
-						key: idx,
-						className: btn,
-						onClick: () => setStory(key),
-					},
-					key,
-				),
-			),
-		),
-		h(
-			"div",
-			{ className: content },
-			h("header", { className: header }, compName || title),
-			h(
-				"main",
-				{ className: main },
-				story
-					? h("iframe", { src: `${path}?component=${story}` })
-					: "Select a component",
-			),
-		),
+	return (
+		<div className={wrapper}>
+			<div className={sideBar}>
+				{Object.keys(stories).map((key, idx) => (
+					<button
+						key={idx}
+						className={btn}
+						onClick={() => setStory(key)}>
+						{key}
+					</button>
+				))}
+			</div>
+			<div className={content}>
+				<header className={header}>{compName || title}</header>
+				<main className={main}>
+					{story ? (
+						<iframe
+							className={preview}
+							src={`${path}?component=${story}`}
+						/>
+					) : (
+						"Select a component"
+					)}
+				</main>
+			</div>
+		</div>
 	);
 };
 
