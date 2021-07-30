@@ -188,7 +188,12 @@ const Stories: FC<{
 		...new URLSearchParams(window.location.search).entries(),
 	].find(([query]) => query === "component")?.[1];
 	const Component = compName && stories[compName];
+<<<<<<< HEAD
 	if (compName) return Component ? h(Component) : h("Component not found");
+=======
+
+	if (compName) return Component ? <Component /> : <>"Component not found"</>;
+>>>>>>> c9993a6bcb4d4bb30d05682f15e1f74c480095af
 
 	const handleInputChange = (value: number, field: string) => {
 		setFrameDimension(dim => ({ ...dim, [field]: `${value}px` }));
