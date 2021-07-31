@@ -25,11 +25,7 @@ const Input = forwardRef(
 		ref?: ForwardedRef<HTMLInputElement | null>,
 	) => {
 		return (
-			<input
-				ref={ref}
-				className={cx(input, props.className)}
-				{...props}
-			/>
+			<input ref={ref} className={cx(input, props.className)} {...props} />
 		);
 	},
 );

@@ -5,6 +5,8 @@ import { presets, Size } from "./Size";
 import Resizer from "./Resizer";
 import Zoom from "./Zoom";
 import Logo from "./Logo";
+import Search from "./Search";
+import { filter } from "./util";
 
 const headerHeight = 50;
 
@@ -99,11 +101,17 @@ const preview = css`
 	transform-origin: top left;
 `;
 
+const noResult = css`
+	margin: 0;
+	padding: 0 1rem;
+`;
+
 const Stories: FC<{
 	stories: Record<string, FC | ComponentClass>;
 	title?: string;
 }> = ({ stories, title = "Fluent Story" }) => {
 	const [story, setStory] = useState<string | null>(null);
+	const [filteredStories, setFilteredStories] = useState<string[] | null>(null);
 	const [zoom, setZoom] = useState<number>(100);
 	const [size, setSize] = useReducer(
 		(state: Size, size: Partial<Size>) => ({ ...state, ...size }),
@@ -120,7 +128,14 @@ const Stories: FC<{
 
 	if (compName) return Component ? <Component /> : <>"Component not found"</>;
 
+	const handleSearch = (key: string) => {
+		console.log({ op: filter(Object.keys(stories), key) });
+		setFilteredStories(filter(Object.keys(stories), key));
+	};
+
 	const { width, height } = size;
+
+	const Stories = filteredStories ? filteredStories : Object.keys(stories);
 
 	return (
 		<div className={wrapper}>
@@ -129,14 +144,16 @@ const Stories: FC<{
 					<Logo />
 				</div>
 				<div className={list}>
-					{Object.keys(stories).map((key, idx) => (
-						<button
-							key={idx}
-							className={btn}
-							onClick={() => setStory(key)}>
-							{key}
-						</button>
-					))}
+					<Search handleSearch={handleSearch} />
+					{Stories.length ? (
+						Stories.map((key, idx) => (
+							<button key={idx} className={btn} onClick={() => setStory(key)}>
+								{key}
+							</button>
+						))
+					) : (
+						<p className={noResult}>No results found.</p>
+					)}
 				</div>
 			</div>
 			<div className={content}>
