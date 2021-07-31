@@ -1,12 +1,11 @@
-import React from "react";
+import React, { FC, SVGProps } from "react";
 
-export default () => (
+const Logo: FC<SVGProps<SVGSVGElement>> = props => (
 	<svg
-		width="1659"
-		height="272"
 		viewBox="0 0 1659 272"
 		fill="none"
-		xmlns="http://www.w3.org/2000/svg">
+		xmlns="http://www.w3.org/2000/svg"
+		{...props}>
 		<path
 			d="M0 212.318H44.2841V125.795H129.477V89.2841H44.2841V39.375H138.682V2.86364H0V212.318Z"
 			fill="black"
@@ -53,3 +52,5 @@ export default () => (
 		/>
 	</svg>
 );
+
+export default Logo;
