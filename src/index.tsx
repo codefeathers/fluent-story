@@ -1,4 +1,4 @@
-import React, { useState, useReducer, useRef } from "react";
+import React, { useState, useReducer, useRef, useEffect } from "react";
 import type { FC, ComponentClass } from "react";
 import { css } from "@emotion/css";
 import { presets, Size } from "./Size";
@@ -6,7 +6,9 @@ import Resizer from "./Resizer";
 import Zoom from "./Zoom";
 import Logo from "./Logo";
 import Search from "./Search";
-import { filter } from "./util";
+import ListRenderer from "./ListRenderer";
+import type { Tree } from "./ListRenderer";
+import { filter, group } from "./util";
 
 const headerHeight = 50;
 
@@ -76,23 +78,6 @@ const main = css`
 	}
 `;
 
-const btn = css`
-	width: 100%;
-	background: #242424;
-	color: #f8f8f8;
-	padding: 0.8rem;
-	margin-bottom: 1rem;
-	display: block;
-	border: none;
-	cursor: pointer;
-	font-size: 15px;
-	font-weight: 500;
-
-	&:hover {
-		background: #2a2a2a;
-	}
-`;
-
 const preview = css`
 	width: 100%;
 	height: 100%;
@@ -101,18 +86,21 @@ const preview = css`
 	transform-origin: top left;
 `;
 
-const noResult = css`
-	margin: 0;
-	padding: 0 1rem;
-`;
-
 const Stories: FC<{
 	stories: Record<string, FC | ComponentClass>;
 	title?: string;
 }> = ({ stories, title = "Fluent Story" }) => {
 	const [story, setStory] = useState<string | null>(null);
 	const [filteredStories, setFilteredStories] = useState<string[] | null>(null);
+	const [groupedStories, setGroupedStories] = useState<Tree>(null);
 	const [zoom, setZoom] = useState<number>(100);
+	useEffect(() => {
+		setGroupedStories(group(Object.keys(stories)));
+	}, []);
+	useEffect(() => {
+		filteredStories?.length && setGroupedStories(group(filteredStories));
+	}, [filteredStories]);
+
 	const [size, setSize] = useReducer(
 		(state: Size, size: Partial<Size>) => ({ ...state, ...size }),
 		{ ...presets.desktop },
@@ -129,13 +117,10 @@ const Stories: FC<{
 	if (compName) return Component ? <Component /> : <>"Component not found"</>;
 
 	const handleSearch = (key: string) => {
-		console.log({ op: filter(Object.keys(stories), key) });
 		setFilteredStories(filter(Object.keys(stories), key));
 	};
 
 	const { width, height } = size;
-
-	const Stories = filteredStories ? filteredStories : Object.keys(stories);
 
 	return (
 		<div className={wrapper}>
@@ -145,14 +130,8 @@ const Stories: FC<{
 				</div>
 				<div className={list}>
 					<Search handleSearch={handleSearch} />
-					{Stories.length ? (
-						Stories.map((key, idx) => (
-							<button key={idx} className={btn} onClick={() => setStory(key)}>
-								{key}
-							</button>
-						))
-					) : (
-						<p className={noResult}>No results found.</p>
+					{groupedStories && (
+						<ListRenderer list={groupedStories} setStory={setStory} />
 					)}
 				</div>
 			</div>
